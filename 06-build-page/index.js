@@ -9,7 +9,7 @@ const bundleCSS = () => {
   fs.readdir(
     path.join(__dirname, 'styles'),
     { withFileTypes: true },
-    (err, files) => {
+    (files) => {
       for (const file of files) {
         if (file.isFile()) {
           const extensionName = path.extname(file.name);
@@ -19,7 +19,6 @@ const bundleCSS = () => {
               'utf-8',
             );
             input.on('data', (data) => output.write(data));
-            console.log(file.name);
           }
         }
       }
@@ -92,8 +91,8 @@ const copyFiles = (src, dest) => {
         fs.copyFile(
           path.join(src, file.name),
           path.join(dest, file.name),
-          (err) => {
-            if (err) throw err;
+          (error) => {
+            if (error) throw error;
           },
         );
       } else {
