@@ -5,6 +5,7 @@ const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
 });
+const output = fs.createWriteStream(path.join(__dirname, 'file.txt'));
 rl.setPrompt('Enter the content of a file ');
 rl.prompt();
 rl.on('line', (data) => {
@@ -14,9 +15,7 @@ rl.on('line', (data) => {
     return;
   }
   if (data !== 'Goodbye!') {
-    fs.writeFile(path.join(__dirname, 'file.txt'), data, (err) => {
-      if (err) throw err;
-    });
+    output.write(data);
   }
 });
 
