@@ -12,9 +12,8 @@ rl.on('line', (data) => {
   if (data === 'exit') {
     rl.write('Goodbye!\n');
     rl.close();
-    return;
   }
-  if (data !== 'Goodbye!') {
+  if (data !== 'Goodbye!' && data !== 'exit') {
     output.write(data);
   }
 });
