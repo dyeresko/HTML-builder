@@ -9,7 +9,8 @@ const bundleCSS = () => {
   fs.readdir(
     path.join(__dirname, 'styles'),
     { withFileTypes: true },
-    (files) => {
+    (error, files) => {
+      if (error) throw error;
       for (const file of files) {
         if (file.isFile()) {
           const extensionName = path.extname(file.name);
@@ -77,9 +78,11 @@ const createProjectDistDirectory = (assetsPath, distPath) => {
         });
       });
     } else {
-      copyFiles(assetsPath, path.join(distPath, 'assets'));
-      bundleHTML();
-      bundleCSS();
+      copyDirectory(
+        path.join(distPath),
+        assetsPath,
+        path.join(distPath, 'assets'),
+      );
     }
   });
 };
@@ -103,4 +106,36 @@ const copyFiles = (src, dest) => {
     }
   });
 };
+
+const copyDirectory = (directoryPath, src, dest) => {
+  fs.readdir(
+    path.join(directoryPath),
+    { withFileTypes: true },
+    (error, files) => {
+      if (error) throw error;
+      for (const file of files) {
+        if (file.isFile()) {
+          fs.rm(path.join(directoryPath, file.name), (error) => {
+            if (error) throw error;
+          });
+        } else {
+          fs.rm(
+            path.join(directoryPath, file.name),
+            { recursive: true, force: true },
+            (error) => {
+              if (error) throw error;
+              fs.mkdir(dest, (error) => {
+                if (error) throw error;
+                copyFiles(src, dest);
+                bundleHTML();
+                bundleCSS();
+              });
+            },
+          );
+        }
+      }
+    },
+  );
+};
+
 createProjectDistDirectory(assetsPath, distPath);
